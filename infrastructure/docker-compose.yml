@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  lovelystay-postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=lovelystay-github
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5431:5432
