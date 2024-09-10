@@ -2,11 +2,12 @@
   "name": "lovelystay-gh-cli",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "flyway": "flyway -c flyway.js",
+    "dev": "tsx src/index.ts",
+    "flyway": "flyway -c flyway.cjs migrate",
     "migrate": "npm run flyway -- migrate",
     "migrate:create": "node scripts/create-migration.js",
     "migrate:local": "export $(xargs < ./.env.local) && npm run migrate"
@@ -17,7 +18,7 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^22.5.4",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "connection-string": "^4.4.0",
     "dotenv": "^16.4.5",
     "node-flywaydb": "^3.0.7",
+    "octokit": "^4.0.2",
     "pg-promise": "^11.9.1",
     "yargs": "^17.7.2"
   }
