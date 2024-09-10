@@ -1,0 +1,9 @@
+dist/
+node_modules/
+tmp/
+.env
+report.html
+report.json
+
+TASK.md
+STEP-BY-STEP.md
