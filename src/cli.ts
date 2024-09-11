@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fetchUser } from './github';
-import { listUsers, saveUser } from './db';
+import { listUsers, saveUserAndLanguages } from './db';
 
 export async function cli() {
   return yargs(hideBin(process.argv))
@@ -13,13 +13,13 @@ export async function cli() {
     }, (argv) => {
       console.log(`Fetching info for user: ${argv.username}`);
       fetchUser(argv.username as string).then(user => {
-        return saveUser(user);
+        console.log(user);
+        return saveUserAndLanguages(user);
       }).catch(error => {
         console.error('Error fetching user info:', error);
       });
     })
     .command('list', 'List all stored users', {}, () => {
-      // TODO: Implement this
       console.log('Listing all users stored in the database');
       listUsers().then(users => {
         users.forEach(user => {

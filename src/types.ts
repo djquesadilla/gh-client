@@ -3,3 +3,7 @@ export type User = {
   name: string;
   location: string;
 }
+
+export type UserWithLanguages = User & {
+  languages: string[];
+}
