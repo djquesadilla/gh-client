@@ -49,7 +49,21 @@ export async function saveUserAndLanguages(user: UserWithLanguages) {
       }
 
       for (const language of user.languages) {
-        await t.none('INSERT INTO users_languages(user_id, language_id) VALUES((SELECT id FROM users WHERE login = $1), (SELECT id FROM languages WHERE name = $2))', [user.login, language]);
+        const userLanguageExists = await t.oneOrNone(`
+          SELECT 1 FROM users_languages
+          WHERE user_id = (SELECT id FROM users WHERE login = $1)
+          AND language_id = (SELECT id FROM languages WHERE name = $2)
+        `, [user.login, language]);
+        
+        if (!userLanguageExists) {
+          await t.none(`
+            INSERT INTO users_languages(user_id, language_id)
+            VALUES(
+              (SELECT id FROM users WHERE login = $1),
+              (SELECT id FROM languages WHERE name = $2)
+            )`, [user.login, language]
+          );
+        }
       }
     })
   } catch (error) {
@@ -71,5 +85,20 @@ export async function listUsers(): Promise<UserWithLanguages[]> {
   }
 }
 
+export async function filterUsers(location?: string, language?: string): Promise<UserWithLanguages[]> {
+  try {
+    return await db.any(`
+      SELECT u.*, array_agg(l.name) as languages
+      FROM users u
+      LEFT JOIN users_languages ul ON u.id = ul.user_id
+      LEFT JOIN languages l ON ul.language_id = l.id
+      WHERE ($1::text IS NULL OR u.location = $1)
+      AND ($2::text IS NULL OR l.name = $2)
+      GROUP BY u.id;
+    `, [location, language]);
+  } catch (error) {
+    throw error;
+  }
+}
 
 export default db;

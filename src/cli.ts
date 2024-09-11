@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fetchUser } from './github';
-import { listUsers, saveUserAndLanguages } from './db';
+import { listUsers, saveUserAndLanguages, filterUsers } from './db';
 
 export async function cli() {
   return yargs(hideBin(process.argv))
@@ -40,10 +40,13 @@ export async function cli() {
           type: 'string',
         });
     }, (argv) => {
-      // TODO: Implement this
-      console.log(`Filtering users:`);
-      if (argv.location) console.log(`Location: ${argv.location}`);
-      if (argv.language) console.log(`Language: ${argv.language}`);
+      filterUsers(argv.location as string, argv.language as string).then(users => {
+        users.forEach(user => {
+          console.log(user);
+        });
+      }).catch(error => {
+        console.error('Error filtering users:', error);
+      });
     })
     .demandCommand(1)
     .help()
