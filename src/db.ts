@@ -57,9 +57,15 @@ export async function saveUserAndLanguages(user: UserWithLanguages) {
   }
 }
 
-export async function listUsers(): Promise<User[]> {
+export async function listUsers(): Promise<UserWithLanguages[]> {
   try {
-    return await db.any('SELECT * FROM users');
+    return await db.any(`
+      SELECT u.*, array_agg(l.name) as languages
+      FROM users u
+      LEFT JOIN users_languages ul ON u.id = ul.user_id
+      LEFT JOIN languages l ON ul.language_id = l.id
+      GROUP BY u.id;
+    `);
   } catch (error) {
     throw error;
   }
