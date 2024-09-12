@@ -1,4 +1,4 @@
-# lovelystay-gh-client
+# gh-client
 
 A command-line application to fetch and list users from Github
 
